@@ -226,7 +226,7 @@ const renderTimeSlots = () => {
     // CHECK FOR NO AVAILABLE SCHEDULE
     if (slots.length === 0 ) {
         // DISPLAY THE NO-APPOINTMENTS MESSAGE
-        timeSlots.innerHTML = '<p class = "selected-date-text">No appointments available for this date.</p>'
+        timeSlots.innerHTML = '<p class = "selected-date-text"> No appointments available for this date.</p>'
         return;
     }
     // LOOP THROUGH THE TIME SLOTS
@@ -244,24 +244,24 @@ const renderTimeSlots = () => {
         // CHECK WHETHER THE TIME IS BOOKED
         if (bookedForDay.includes(slot)) {
             // DISABLE A BOOKED TIME
-            slotBtn.classList.add("disabled"); // ?????
+            slotBtn.classList.add("disabled");
             slotBtn.disabled = true;
             // CHANGED THE BOOKED BUTTON TEXT
-            slotBtn.textContent = `${slot} - Booked` // ??????
-        }
+            slotBtn.textContent = `${slot} - Booked`;
+        };
         // CHECK FOR THE SELECTED TIME
         if (selectedTime === slot) {
             // ADD THE SELECTED TIME CLASS
             slotBtn.classList.add("selected");
-            // ADD THE TIME BUTTON CLICK EVENT
-            slotBtn.addEventListener("click", () => {
-                // SAVE THE SELECTED TIME
-                selectedTime = slot;
-                selectedTimeInput.value = slot;
-                // RENDER THE TIME BUTTONS AGAIN
-                renderTimeSlots();
-            })
-        }
+        };
+        // ADD THE TIME BUTTON CLICK EVENT
+        slotBtn.addEventListener("click", () => {
+            // SAVE THE SELECTED TIME
+            selectedTime = slot;
+            selectedTimeInput.value = slot;
+            // RENDER THE TIME BUTTONS AGAIN
+            renderTimeSlots();
+        });
         // APPEND TIME BUTTON
         timeSlots.append(slotBtn);
     };
@@ -292,10 +292,10 @@ if (nextMonthBtn) {
         if (currentMonth > 11) {
             currentMonth = 0;
             currentYear++;
-        }
+        };
         // RENDER THE NEXT MONTH
         renderCalendar();
-    })
+    });
 };
 // PART 8: HANDLE THE BOOKING FORM
 if (bookingForm) {
@@ -330,23 +330,24 @@ if (bookingForm) {
             bookingMessage.className = "booking-message error";
             // UPDATE THE TIME BUTTONS
             renderTimeSlots();
-            // SAVE THE NEW APPOINTMENT
-            bookedAppointments[selectedDate.key].push(timeValue);
-            // CREATE THE SUCCESS MESSAGE
-            bookingMessage.textContent = 
-            // PASS THE SELECTED DATE INTO THE FUNCTION
-            // FORMAT THE FULL MESSAGE
-            `${nameValue}, your ${serviceValue} appointment is booked for ${formatReadableDate(selectedDate.year, selectedDate.month, selectedDate.day)} at ${timeValue}`
-            // ADD THE SUCCESS CLASS
-            bookingMessage.className = "booking-message success";
-            // RESET THE FORM
-            bookingForm.reset();
-            // CLEAR THE SELECTED TIME
-            selectedTime = "";
-            selectedTimeInput.value = "";
-            // UPDATE THE TIME BUTTONS
-            renderTimeSlots();
-        }
+            return;
+        };
+        // SAVE THE NEW APPOINTMENT
+        bookedAppointments[selectedDate.key].push(timeValue);
+        // CREATE THE SUCCESS MESSAGE
+        bookingMessage.textContent = 
+        // PASS THE SELECTED DATE INTO THE FUNCTION
+        // FORMAT THE FULL MESSAGE
+        `${nameValue}, your ${serviceValue} appointment is booked for ${formatReadableDate(selectedDate.year, selectedDate.month, selectedDate.day)} at ${timeValue}`
+        // ADD THE SUCCESS CLASS
+        bookingMessage.className = "booking-message success";
+        // RESET THE FORM
+        bookingForm.reset();
+        // CLEAR THE SELECTED TIME
+        selectedTime = "";
+        selectedTimeInput.value = "";
+        // UPDATE THE TIME BUTTONS
+        renderTimeSlots();
     });
 };
 // PART 9: START THE APPLICATION
