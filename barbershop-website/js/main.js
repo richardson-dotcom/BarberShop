@@ -14,6 +14,14 @@ const featureGrid = document.getElementById("featureGrid");
 
 const nav = document.getElementById("nav");
 
+// Modal Elements
+const serviceModal = document.getElementById("serviceModal");
+const serviceModalOverlay = document.getElementById("serviceModalOverlay");
+const serviceModalClose = document.getElementById("serviceModalClose");
+const serviceModalTitle = document.getElementById("serviceModalTitle");
+const serviceModalPrice = document.getElementById("serviceModalPrice");
+const serviceModalList = document.getElementById("serviceModalList");
+
 
 
 // Functions
@@ -46,7 +54,6 @@ const navLinks = [
 
 // Function that renders links to nav tag and mobileNav tag
 const renderNavigation = () => {
-    console.log("Render Navigation is being called");
 
     try{
     // desktop Nav
@@ -85,19 +92,99 @@ renderNavigation();
 // Services (An array of objects)
 const services =  [
     {
+        id: 1,
         title:"Classic Haircuts", 
-        text: "Timeless Cuts w/ Modern Precision-Tailoring to your style", 
-        image: "assets/images/feature-1.jpg"
+        description: "Timeless Cuts w/ Modern Precision-Tailoring to your style", 
+        image: "assets/images/feature-1.jpg",
+        alt: "Classic Haircut",
+        price: 25,
+        popular: true,
+        details: [
+            "Consultation with your barber before the cut begins.",
+            "Hair sectioning and shape-up based on your preferred stye",
+            "Professional clippers, trimmers, and shears used for precision",
+            "Neckline cleanup and finishing touches included",
+            "Light styling product applied for a clean final look"
+        ]
     },
     {
-        title:"Beard Trims", 
-        text: "Shape, Line-up, and Refine your beard", 
-        image: "assets/images/feature-2.jpg"
+        id: 2,
+        title: "Beard Trims", 
+        description: "Shape, Line-up, and Refine your beard", 
+        image: "assets/images/feature-2.jpg",
+        alt: "Bread Trim",
+        price: 15,
+        popular: true,
+        details: [
+            "Beard assessment and shaping based on face structure",
+            "Line-Up around cheeks, jawline, and neckline",
+            "Conditioning beard product may be applied for softness",
+            "Final symmetry check for a polished finish"
+        ]
     },
     {
+        id: 3,
         title:"Straight Razor Shave", 
-        text: "Hot Towel, Smooth Shave, and classic barbershop experience", 
-        image: "assets/images/feature-3.jpg"
+        description: "Hot Towel, Smooth Shave, and classic barbershop experience", 
+        image: "assets/images/feature-3.jpg",
+        alt: "Straight Razor Shave",
+        price: 30,
+        popular: true,
+        details: [
+            "Hot towel prep to soften facial hair and open pores",
+            "Premium shaving cream or lather applied to protect the skin",
+            "Straight razor shave performed with careful detailing",
+            "Second hot towel may be used for comfort and cleanup",
+            "Aftershave or soothing skin product applied after shave"
+        ]
+    },
+    {
+        id: 4,
+        title: "Fade & Style",
+        description: "A clean fade with finishing detail for a sharp, modern look",
+        image: "assets/images/feature-2.jpg",
+        alt: "Fade Haircut",
+        price: 35,
+        popular: false,
+        details: [
+            "Style consultation before clipper work begins",
+            "Fade blended to your preferred level and finish",
+            "Detailing around temples, neckline, and beard area if needed",
+            "Scissors and clipper-over-comb may be used for texture",
+            "Styling product added to complete the final look"
+        ]
+    },
+    {
+        id: 5,
+        title: "Kids Cut",
+        description: "Clean, comfortable haircut service for younger clients",
+        image: "assets/images/feature-1.jpg",
+        alt: "Kids haircut",
+        price: 20,
+        popular: false,
+        details: [
+            "Simple consultation with child and parent if needed",
+            "Age-appropriate haircut with comfort in mind",
+            "Careful clipper and scissor work for a clean finish",
+            "Light cleanup around the neckline and ears",
+            "Styled neatly before leaving the chair"
+        ]
+    },
+    {
+        id: 6,
+        title: "Head Shave",
+        description: "Smooth head shave with classic barbershop treatment",
+        image: "assets/images/feature-3.jpg",
+        alt: "Head Shave",
+        price: 28,
+        popular: true,
+        details: [
+            "Scalp prep with warm towel treatment",
+            "Protective shave product applied before razor work",
+            "Close shave performed for a smooth finish",
+            "Scalp cleaned and checked for even consistency",
+            "Moisturizing scalp product applied after the shave"
+        ]
     }
 ];
 
@@ -107,13 +194,40 @@ const renderFeatures = () => {
     if(!featureGrid) {return};
 
     const cardsHTML = services.map((service) => {
+        let badgeHTML = "";
+
+        if(service.popular) {
+            badgeHTML = `<p class="service-badge">Popular Choice</p>`
+        } else {
+            badgeHTML = `<p class="service-badge alt-badge">Barber Favorite</p>`
+        }
+
         return `
-        <article class="feature-card">
-            <img src = "${service.image}" alt="${service.title}" class="feature-img" />
-            <h3 class="feature-title">${service.title}</h3>
-            <p class="feature-text">${service.text}</p>
-          </article>
-        `
+            <article class="feature-card">
+                <img
+                    src="${service.image}"
+                    alt="${service.alt}"
+                    class="feature-img"
+                />
+
+                <h3 class="feature-title">${service.title}</h3>
+                <p class="feature-text">${service.description}</p>
+
+                ${badgeHTML}
+
+                <p class="service-price"${service.price}</p>
+                <div class="service-actions">
+                    <button
+                        class="service-details-btn"
+                        type="button"
+                        data-service-id="${service.id}"
+                    >
+                        View Details
+                    </button>
+                </div>
+            </article>
+        `;
+
     }).join(""); // using join() method to output it to the featureGrid
     featureGrid.innerHTML = cardsHTML
 };
@@ -143,6 +257,43 @@ const closedMobileMenu = () => {
 const updateHeadingText = (newText) => {
     if(!heading) return;
     heading.textContent = newText;
+};
+
+// Creating openServiceModal()
+const openServiceModal = (serviceId) => {
+    if (
+        !serviceModal ||
+        !serviceModalTitle ||
+        !serviceModalPrice ||
+        !serviceModalList
+    ) {
+        return;
+    }
+
+    const selectedService = services.find((service) => {
+        return service.id === Number(serviceId);
+    });
+
+    if (!selectedService) return;
+
+    serviceModalTitle.textContent = selectedService.title;
+    serviceModalPrice.textContent = `$${selectedService.price}`
+
+    serviceModalList.innerHTML = selectedService.details.map((detail) => {
+        return `<li>${detail}</li>`;
+    }).join("");
+
+    serviceModal.classList.add("is-open");
+    serviceModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+};
+
+// Creating closeServiceModal()
+const closeServiceModal = () => {
+    if (!serviceModal) return;
+
+    serviceModal.classList.remove("is-open");
+    document.body.style.overflow = "";
 };
 
 
@@ -181,3 +332,30 @@ if(callBtn) {
         };
     });
 };
+
+// Adding Event Delegation to the Feature Grid
+if (featureGrid) {
+    featureGrid.addEventListener("click", (event) => {
+        const clickedButton = event.target.closest(".service-details-btn");
+
+        if (!clickedButton) return;
+
+        const serviceId = clickedButton.dataset.serviceId;
+
+        openServiceModal(serviceId);
+    });
+};
+
+
+// Add Modal Closing Events
+if (serviceModalClose) {
+ serviceModalClose.addEventListener("click", closeServiceModal);
+}
+if (serviceModalOverlay) {
+ serviceModalOverlay.addEventListener("click", closeServiceModal);
+}
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        closeServiceModal();
+    }
+});
